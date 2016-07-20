@@ -1,5 +1,5 @@
 module.exports = {
-  entry: "./build/main.js",
+  entry: "./src/main.tsx",
   output: {
     path: './build',
     publicPath: '/build/',
@@ -8,14 +8,16 @@ module.exports = {
   devServer: {
     port: 3000
   },
+  resolve: {
+    // Add '.ts' and '.tsx' as resolvable extensions.
+    extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"]
+  },
   module: {
-    loaders: [{
-      test: /\.js?$/,
-      exclude: /node_modules/,
-      loader: 'babel-loader',
-      query: {
-        "presets": ["react", "es2015", "stage-0"]
+    loaders: [
+      {
+        test: /\.ts(x?)$/,
+        loader: 'babel-loader!ts-loader'
       }
-    }]
+    ]
   }
 };

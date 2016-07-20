@@ -11,8 +11,7 @@
         "removeComments": true,
         "noLib": false,
         "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "outDir": "./build"
+        "suppressImplicitAnyIndexErrors": true
     },
     "exclude": [
         "node_modules"
