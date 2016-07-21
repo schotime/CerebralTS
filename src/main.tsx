@@ -1,3 +1,6 @@
+//IE FIX: Must be first import in entry file.
+import "babel-polyfill";
+
 import * as React from 'react'
 import {render} from 'react-dom'
 import {Container} from 'cerebral-view-react'

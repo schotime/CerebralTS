@@ -1,5 +1,7 @@
 module.exports = {
-  entry: "./src/main.tsx",
+  entry: {
+    main: "./src/main.tsx"
+  },
   output: {
     path: './build',
     publicPath: '/build/',
@@ -15,8 +17,9 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /\.ts(x?)$/,
-        loader: 'babel-loader!ts-loader'
+        test: /\.tsx?$/,
+        loader: 'babel-loader?presets[]=react,presets[]=es2015,presets[]=stage-0!ts-loader',
+        exclude: /node_modules/
       }
     ]
   }

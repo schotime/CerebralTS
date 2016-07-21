@@ -29,6 +29,7 @@ export default connect<Props>({
       <div>
         <form onSubmit={onFormSubmit}>
           <input
+            autoFocus
             type="text"
             value={props.newItemTitle}
             onChange={onInputChange}
