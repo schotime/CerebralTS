@@ -9,7 +9,7 @@ interface Props extends PropSignals {
 }
 
 export default connect<Props>({
-  newItemTitle: pathFromModel(x=> x.newItemTitle),
+  newItemTitle: pathFromModel(x => x.newItemTitle),
   items: pathFromModel(x => x.items)
 },
   function App(props) {

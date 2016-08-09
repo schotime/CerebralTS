@@ -8,7 +8,7 @@ const controller = Controller(model)
 
 export interface CoreSignals {
   newItemTitleSubmitted: () => void,
-  newItemTitleChanged: ({ title: string }) => void
+  newItemTitleChanged: (input: { title: string }) => void
 }
 
 controller.addSignals({

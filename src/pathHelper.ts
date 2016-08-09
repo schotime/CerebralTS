@@ -1,7 +1,9 @@
 import {MyModel} from './model';
 
+const re = /function\s*\((\w)\)\s*{\s*return\s*\1\.([\w\.\[\]]+);\s*}/g;
+
 function dataFrom<T, T2>(func: (model: T) => T2, args: any[]): T2 {
-    const re = /function\s*\((\w)\)\s*{\s*return\s*\1\.([\w\.\[\]]+);\s*}/g;
+    re.lastIndex = 0;
     const str = func.toString();
     let m;
 
