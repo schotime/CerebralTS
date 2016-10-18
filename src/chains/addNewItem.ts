@@ -2,9 +2,9 @@
 // it part of the signal execution
 import addItem from '../actions/addItem'
 import modifyItem from '../actions/modifyItem'
-import {set} from 'cerebral/operators'
-import { ChainBuilder } from '../chainBuilder';
+import { set } from 'cerebral/operators'
 import pathFromModel from '../pathHelper';
+import { chain, InputOnlyActionContext, DirectOutputActionContext } from 'cerebral-ts/chains';
 
 // export default [
 //   // You just reference the action and the
@@ -16,26 +16,23 @@ import pathFromModel from '../pathHelper';
 //   set('state:newItemTitle', '')
 // ]
 
-export interface ChainInput {
-  name: string
-}
-
 export interface Output {
   result: boolean;
 }
 
-var chain = new ChainBuilder<ChainInput>()
-  .when(modifyItem)
-  .thenif(x => ({
-    true: x.do(z => {console.log('true'); }).BB(),
-    false: x.do(z => {console.log('false'); }).BB()
-  }))
-  .do(
-    addItem,
-    set(`state:${pathFromModel(x=>x.newItemTitle)}`, '')
-  )
-  .B();
+var c = chain(x => x
+  // .waitFor(modifyItem, {
+  //   true: chain(y => y
+  //     .run(() => console.log('true'))
+  //   ),
+  //   false: chain(y => y
+  //     .run(() => console.log('false'))
+  //   )
+  // })
+  .run(addItem)
+  .run(({state,input}) => state.set(pathFromModel(x => x.newItemTitle), ''))  
+);
 
+//console.log(c);
 
-
-export default chain;
+export default c;

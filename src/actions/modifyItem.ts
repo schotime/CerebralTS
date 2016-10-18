@@ -1,14 +1,12 @@
 // This action grabs the current "newItemTitle"
 // from the state store and putting it at the top of
 // the "items" array
-import { IContext, TrueFalseOutput, startWith } from '../chainBuilder';
-import { ChainInput, Output } from '../chains/addNewItem';
+import { IContext, TrueFalseActionContext } from 'cerebral-ts/chains';
+import { Output } from '../chains/addNewItem';
 
-type TrueResultContext<TInput, TOutput> = IContext<ChainInput, TrueFalseOutput<TOutput>, TOutput>;
-
-function modifyItem({input, output}: TrueResultContext<ChainInput, Output>) {
+function modifyItem({input, output}:TrueFalseActionContext<{}, Output>) {
   var x = input;
-  if (input.name != "adam") {
+  if (input != "adam") {
     output.true({ result: true });
   }
   else {

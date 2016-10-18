@@ -1,0 +1,21 @@
+{
+  "name": "cerebral-ts",
+  "version": "0.0.1",
+  "description": "cerebral typescript",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "cerebral-ts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": ""
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

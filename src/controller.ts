@@ -1,4 +1,5 @@
 import {Controller} from 'cerebral'
+import {immediate} from 'cerebral-ts/chains'
 import model from './model'
 import updateItemTitle from './chains/updateItemTitle'
 import addNewItem from './chains/addNewItem'
@@ -11,11 +12,8 @@ export interface CoreSignals {
   newItemTitleChanged: (input: { title: string }) => void
 }
 
-controller.addSignals({
-  newItemTitleChanged: {
-    chain: updateItemTitle,
-    immediate: true
-  },
+controller.addSignals<CoreSignals>({
+  newItemTitleChanged: immediate(updateItemTitle),
   newItemTitleSubmitted: addNewItem
 })
 
