@@ -4,10 +4,20 @@
 import {IContext} from 'cerebral-ts/chains';
 import {MyModel} from '../model';
 import pathFromModel from '../pathHelper';
-import { Output } from '../chains/addNewItem';
 
-function addItem({input, state} : IContext<Output, any, any>) {
-  state.unshift(pathFromModel(x => x.items), state.get(pathFromModel(x => x.newItemTitle)))
+export interface Input {
+
+}
+
+export interface Output {
+  newTitle: string
+}
+
+function addItem({input, state}: IContext<Input>) : Output {
+  state.unshift(pathFromModel(x => x.items), state.get(pathFromModel(x => x.newItemTitle)));
+  return {
+    newTitle: state.get(pathFromModel(x => x.newItemTitle))
+  }
 }
 
 export default addItem

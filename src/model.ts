@@ -1,5 +1,3 @@
-import Model from 'cerebral-model-immutable';
-
 export interface MyModel {
   items: string[],
   newItemTitle: string
@@ -10,6 +8,6 @@ const strongModel: MyModel = {
   newItemTitle: ''
 };
 
-const model = Model(strongModel);
+const model = strongModel;
 
 export default model;

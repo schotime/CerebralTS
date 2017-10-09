@@ -20,14 +20,12 @@
     "build": "webpack --config webpack.config.js --progress --verbose"
   },
   "dependencies": {
+    "@cerebral/react": "^2.2.0",
     "babel-polyfill": "^6.9.1",
-    "cerebral": "^0.35.4",
-    "cerebral-module-devtools": "^0.7.2",
+    "cerebral": "^3.2.0",
     "cerebral-ts": "file:cerebral-ts",
-    "cerebral-view-react": "^0.12.2",
-    "react": "^15.3.0",
-    "react-dom": "^15.3.0",
-    "typescript": "^2.1.0-dev.20160723",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "undefined": "0.1.0"
   },
   "devDependencies": {
@@ -37,7 +35,7 @@
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-0": "^6.5.0",
     "ts-loader": "^0.8.2",
-    "typescript": "^2.1.0-dev.20160720",
+    "typescript": "^2.6.0-dev.20171007",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   }

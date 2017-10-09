@@ -8,11 +8,13 @@
         "emitDecoratorMetadata": true,
         "declaration": false,
         "noImplicitAny": false,
+        "noImplicitReturns": false,
         "removeComments": true,
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "outDir": "build"
+        "outDir": "build",
+        "strictFunctionTypes": true
     },
     "compileOnSave": false,
     "exclude": [

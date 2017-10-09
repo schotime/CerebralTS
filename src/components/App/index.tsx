@@ -1,26 +1,31 @@
 import * as React from 'react'
-import {connect} from 'cerebral-view-react'
+import {connect} from '@cerebral/react'
 import pathFromModel from '../../pathHelper';
 import PropSignals from '../../signals';
+import { state, signal } from 'cerebral/tags';
 
 interface Props extends PropSignals {
   newItemTitle: string,
-  items: string[]
+  items: string[],
+  newItemTitleSubmitted: () => void,
+  newItemTitleChanged: (input: { title: string }) => void
 }
 
 export default connect<Props>({
-  newItemTitle: pathFromModel(x => x.newItemTitle),
-  items: pathFromModel(x => x.items)
+  newItemTitle: state`${pathFromModel(x => x.newItemTitle)}` as any,
+  items: state`${pathFromModel(x => x.items)}` as any,
+  newItemTitleSubmitted: signal`newItemTitleSubmitted` as any,
+  newItemTitleChanged: signal`newItemTitleChanged` as any
 },
   function App(props) {
 
     const onFormSubmit = event => {
       event.preventDefault()
-      props.signals.newItemTitleSubmitted()
+      props.newItemTitleSubmitted()
     }
 
     const onInputChange = event => {
-      props.signals.newItemTitleChanged({
+      props.newItemTitleChanged({
         title: event.target.value
       })
     }

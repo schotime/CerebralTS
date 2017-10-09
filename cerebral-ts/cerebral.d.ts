@@ -1,4 +1,4 @@
-﻿declare module "cerebral" {
+﻿declare module "cerebralts/c" {
     interface ICommonModule {
         addModules(modules: any): void;
         addSignals<T>(signals: T): void;

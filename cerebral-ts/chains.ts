@@ -1,45 +1,57 @@
-import { IStateModel } from "cerebral";
+import { IStateModel } from "cerebralts/c";
+import { parallel } from "cerebral";
+import { Sequence } from "function-tree";
 
-export interface IContext<TInput, TOutput, TOutputData> {
+export interface IContext<TInput> {
 	input: TInput,
 	state: IStateModel,
-	output: TOutput,
-	services: any
+	services: any,
+	path: any
 }
 
-type ChainResult<T> = (((x: T) => void) & (() => void));
+//type ChainResult<T> = (((x: T) => void) & (() => void));
 
 class ChainBuilder<TInput> {
 	signals: any[];
 	constructor(signals: any[]) {
 		this.signals = signals;
 	}
-	run<TOutput, TOutputData>(...action: ((input: IContext<TInput, TOutput, TOutputData>) => void)[]) : ChainBuilder<TInput & TOutputData> {
-		this.signals.push(...action);
-		return this;
-	}
-	parallel(...chain: ChainResult<TInput>[]) : ChainBuilder<TInput> {
-		this.signals.push(chain.map(x => (x as any).signals).reduce((x, y) => x.concat(y), []));
-		return this;
-	}
-	waitFor<TInput, TOutput, TOutputData>(action: ((input: IContext<TInput, TOutput, TOutputData>) => void), continueWith: TOutput) : ChainBuilder<TInput & TOutputData> {
+	seq<TOutput>(action: ((input: IContext<TInput>) => TOutput)) : ChainBuilder<TInput & TOutput> {
 		this.signals.push(action);
-		this.signals.push(continueWith);
+		return new ChainBuilder<TInput & TOutput>(this.signals);
+	}
+	seqPath<TOutput, TOutputData>(action: ((input: IContext<TInput>) => PathResult<TOutput, TOutputData>), arg: ((input: ChainBuilder<TOutputData>) => TOutput)) : ChainBuilder<TInput & TOutputData> {
+		this.signals.push(action);
+		this.signals.push(arg);
 		return new ChainBuilder<TInput & TOutputData>(this.signals);
 	}
+	parallel<TOutput>(chain: ((input: ChainBuilder<TInput>) => ChainBuilder<TOutput>)) : ChainBuilder<TOutput> {
+
+		var cb = new ChainBuilder<TInput>([]);
+		var result = chain(cb);
+		this.signals.push(parallel(result.signals));
+		return result;		
+	}
+	// waitFor<TInput>(action: ((input: IContext<TInput>) => void), continueWith: TOutput) : ChainBuilder<TInput & TOutputData> {
+	// 	this.signals.push(action);
+	// 	this.signals.push(continueWith);
+	// 	return new ChainBuilder<TInput & TOutputData>(this.signals);
+	// }
 }
 
-export function chain<TInput>(arg: (input: ChainBuilder<TInput>) => ChainBuilder<TInput>): ChainResult<TInput> {
+export interface PathResult<T, U> {
+	
+}
+
+export interface TrueFalseResult<T> {
+	true: ChainBuilder<T>,
+	false: ChainBuilder<T>
+}
+
+export function chain<TInput>(arg: (input: ChainBuilder<TInput>) => ChainBuilder<TInput>): Sequence {
 	var builder = new ChainBuilder<TInput>([]);
 	arg(builder);
 	return (builder as any).signals;
-}
-
-export function immediate<T>(chain: T) {
-	return {
-		chain: chain,
-		immediate: true
-	} as any as T;
 }
 
 interface DirectOutput<T> {
@@ -56,7 +68,7 @@ interface SuccessErrorOutput<T> {
   	error(input: T) : void
 }
 
-export type InputOnlyActionContext<TInput> = IContext<TInput, {}, {}> 
-export type SuccessErrorActionContext<TInput, TOutput> = IContext<TInput, SuccessErrorOutput<TOutput>, TOutput>;
-export type TrueFalseActionContext<TInput, TOutput> = IContext<TInput, TrueFalseOutput<TOutput>, TOutput>;
-export type DirectOutputActionContext<TInput, TOutput> = IContext<TInput, DirectOutput<TOutput>, TOutput>;
+export type InputOnlyActionContext<TInput> = IContext<TInput> 
+export type SuccessErrorActionContext<TInput> = IContext<TInput>;
+export type TrueFalseActionContext<TInput> = IContext<TInput>;
+export type DirectOutputActionContext<TInput> = IContext<TInput>;

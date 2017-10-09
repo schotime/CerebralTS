@@ -1,11 +1,11 @@
-﻿declare module 'cerebral-view-react' {
+﻿declare module '@cerebral/react' {
     import { SFC, ComponentClass, ClassicComponentClass } from 'react';
-    import { IController } from 'cerebral';
+    //import { IController } from 'cerebral';
 
     type Components<P> = ComponentClass<P> | ClassicComponentClass<P> | SFC<P>;
 
     export interface ContainerProps {
-        controller: IController;
+        controller: any;
         [id: string]: any;
     }
 

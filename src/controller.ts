@@ -1,24 +1,24 @@
 import {Controller} from 'cerebral'
-import {immediate} from 'cerebral-ts/chains'
 import model from './model'
 import updateItemTitle from './chains/updateItemTitle'
 import addNewItem from './chains/addNewItem'
 import Devtools from 'cerebral-module-devtools'
 
-const controller = Controller(model)
+const controller = Controller({
+  state: model,
+  signals: {
+    newItemTitleChanged: updateItemTitle,
+    newItemTitleSubmitted: addNewItem
+  }
+})
 
 export interface CoreSignals {
   newItemTitleSubmitted: () => void,
   newItemTitleChanged: (input: { title: string }) => void
 }
 
-controller.addSignals<CoreSignals>({
-  newItemTitleChanged: immediate(updateItemTitle),
-  newItemTitleSubmitted: addNewItem
-})
-
-controller.addModules({
-  devtools: Devtools(),
-})
+// controller.addSignals<CoreSignals>({
+  
+// })
 
 export default controller
