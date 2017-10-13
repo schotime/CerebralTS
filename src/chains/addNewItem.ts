@@ -1,91 +1,71 @@
 // You can import any action and make
 // it part of the signal execution
-import addItem, { Input, Output } from '../actions/addItem'
-import modifyItem, { Output as modOutput } from '../actions/modifyItem'
 import { set } from 'cerebral/operators'
-import pathFromModel from '../pathHelper';
-import { chain, InputOnlyActionContext, DirectOutputActionContext, IContext } from 'cerebral-ts/chains';
+import { chain, chainEmpty, MyContext } from "../helpers"
 
-// export default [
-//   // You just reference the action and the
-//   // signal will handle its execution
-//   addItem,
-
-//   // We use an action factory from cerebral-addons
-//   // to empty the value of our input
-//   set('state:newItemTitle', '')
-// ]
-
-// export interface Output {
-//   result: boolean;
-// }
-
-// var c = chain(x => x
-//   // .waitFor(modifyItem, {
-//   //   true: chain(y => y
-//   //     .run(() => console.log('true'))
-//   //   ),
-//   //   false: chain(y => y
-//   //     .run(() => console.log('false'))
-//   //   )
-//   // })
-//   .run(addItem)
-//   .run(({state,input}) => state.set(pathFromModel(x => x.newItemTitle), ''))  
-// );
-
-interface Par1Result {
-  par1: string
+export interface Output {
+  newTitle: string
 }
 
-interface Par2Result {
-  par2: number
-}
+function addItem({ props, helper, http }: MyContext<{}>): Output {
+  helper.state(x => x.items).unshift(helper.state(x => x.newItemTitle).get());
 
-interface PathResult {
-  mypath: string
-}
-
-function par1(context: IContext<Input>) : Par1Result {
-  return { par1: "par1" };
-}
-
-async function par2(context: IContext<Output>) : Promise<Par2Result> {
-  return await { par2: 2 };
-}
-
-function update({state, input}: IContext<Output>) : void {
-  state.set(pathFromModel(x => x.newItemTitle), '');
-}
-
-function pathAction(context: IContext<modOutput>) : PathResult {
   return {
-    mypath: "asdf"
+    newTitle: helper.state(x => x.newItemTitle).get()
   }
 }
 
-var d = chain1<Input>([
-  addItem,
-  //update
-])
-
-var c = chain<Input>(x => x
-  .seq(addItem)
-  .seq(update)
-  .seqPath(modifyItem, r => ({
-    true: r.seq(({input}) => input.result),
-    false: r.seq(pathAction)
-  }))
-  .parallel(z => z
-    .seq(par1)
-    .seq(par2)
-  )
-  .seq(({state, input}) => { input.newTitle })
-)
-
-function chain1<T>(arg: ((input: IContext<T>) => any)[]) {
-  return arg;
+function update({ props, helper }: MyContext<Output>): Output {
+  helper.state(x => x.newItemTitle).set('');
+  return props;
 }
 
-//console.log(c);
+interface PathModel {
+  success: PathResult,
+  error: PathResult
+}
+
+interface PathResult {
+  newTitleResult: string
+}
+
+function pathTest({ props, helper, path }: MyContext<Output, PathModel>): PathResult {
+  helper.state(x => x.newItemTitle).set('');
+
+  if(props.newTitle == "test") {
+    return path.success({ newTitleResult: props.newTitle });
+  } else {
+    return path.error({ newTitleResult: props.newTitle });
+  }
+}
+
+interface Countries {
+  name: string,
+  alphaCode2: string,
+  flag: string
+}
+
+var c = chainEmpty(x => x
+  .seq(addItem)
+  .seq(update)
+  .parallel(p => p
+    .seq(async ({ props, http }) => {
+      let results = await http.get<any>("https://api.flickr.com/services/rest/?&method=flickr.people.getPublicPhotos&format=json&api_key=6f93d9bd5fef5831ec592f0b527fdeff&user_id=9395899@N08");
+      return { flickies: results.result }
+    })
+    .seq(async ({ props, http }) => {
+      let results = await http.get<Countries[]>("https://restcountries.eu/rest/v2/regionalbloc/eu");
+      return { countries: results.result[0].flag }
+    })
+  )
+  .seq(({ props, helper }) => { console.log("ehh?", props, helper); })
+  .seqPath(pathTest)
+    .withPaths({
+        success: y => y.seq(({ props }) => { console.log("success", props.newTitleResult) }),
+        error: y => y.seq(({ props }) => { console.log("error", props.newTitleResult) })
+    })
+)
+
+console.log(c);
 
 export default c;

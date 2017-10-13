@@ -14,7 +14,7 @@
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
         "outDir": "build",
-        "strictFunctionTypes": true
+        "strict": true
     },
     "compileOnSave": false,
     "exclude": [

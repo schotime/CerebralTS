@@ -1,9 +1,9 @@
-export interface MyModel {
+export interface StateModel {
   items: string[],
   newItemTitle: string
 };
 
-const strongModel: MyModel = {
+const strongModel: StateModel = {
   items: [],
   newItemTitle: ''
 };

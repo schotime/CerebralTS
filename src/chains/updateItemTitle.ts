@@ -1,18 +1,16 @@
 // "copy" is an action factory that creates
 // an action based on your arguments
 //import {copy} from 'cerebral/operators'
-import { chain } from 'cerebral-ts/chains';
 import { set } from 'cerebral/operators';
-import { state, props } from 'cerebral/tags';
+import { props } from 'cerebral/tags';
+import { Sequence } from 'function-tree';
+import { chain, state } from '../helpers'
 
-export default [
-  set(state`newItemTitle`, props`title`)
-]
+interface Input {
+  title: string
+}
 
-
-// chain(x => x
-//   .run(
-//     copy('input:title', 'state:newItemTitle') 
-//   )
-// );
-
+var c = chain<Input>(x => x.seq(
+  set(x.tags.state(y => y.newItemTitle), x.tags.props(x => x.title)),
+));
+export default c;

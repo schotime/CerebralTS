@@ -1,21 +1,20 @@
 import * as React from 'react'
-import {connect} from '@cerebral/react'
-import pathFromModel from '../../pathHelper';
-import PropSignals from '../../signals';
-import { state, signal } from 'cerebral/tags';
+import { signals } from '../../controller';
+import { state, signal } from '../../helpers';
+import { connect } from 'cerebral-ts/controller'
 
-interface Props extends PropSignals {
+interface Props {
   newItemTitle: string,
   items: string[],
-  newItemTitleSubmitted: () => void,
-  newItemTitleChanged: (input: { title: string }) => void
+  newItemTitleSubmitted: typeof signals.newItemTitleSubmitted,
+  newItemTitleChanged: typeof signals.newItemTitleChanged
 }
 
 export default connect<Props>({
-  newItemTitle: state`${pathFromModel(x => x.newItemTitle)}` as any,
-  items: state`${pathFromModel(x => x.items)}` as any,
-  newItemTitleSubmitted: signal`newItemTitleSubmitted` as any,
-  newItemTitleChanged: signal`newItemTitleChanged` as any
+  newItemTitle: state(x => x.newItemTitle),
+  items: state(x => x.items),
+  newItemTitleSubmitted: signal(x => x.newItemTitleSubmitted),
+  newItemTitleChanged: signal(x => x.newItemTitleChanged)
 },
   function App(props) {
 

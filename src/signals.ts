@@ -1,15 +1,4 @@
-import { CoreSignals } from './controller';
-
-export interface Signals extends CoreSignals {
-
+export interface CoreSignals {
+    newItemTitleSubmitted: (() => void),
+    newItemTitleChanged: ((input: { title: string }) => void)
 }
-
-export interface ISignals<T> {
-  signals?: T
-}
-
-interface PropSignals extends ISignals<Signals>{
-  
-}
-
-export default PropSignals;
