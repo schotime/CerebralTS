@@ -30,8 +30,6 @@ interface PathResult {
 }
 
 function pathTest({ props, helper, path }: MyContext<Output, PathModel>): PathResult {
-  helper.state(x => x.newItemTitle).set('');
-
   if(props.newTitle == "test") {
     return path.success({ newTitleResult: props.newTitle });
   } else {

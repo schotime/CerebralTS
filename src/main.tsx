@@ -10,6 +10,6 @@ import App from './components/App'
 
 render((
   <Container controller={controller}>
-    <App />
+    <App itemIn={0} />
   </Container>
 ), document.querySelector('#app'))

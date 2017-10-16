@@ -1,6 +1,6 @@
 const pathLambdaRegex = /function\s*\((\w)\)\s*{\s*return\s*\1[\.]?([\w\.\[\]]+);\s*}/g;
 
-export function cerebralPathFromFunction<T, T2>(func: (model: T) => T2, args: any[]): T2 {
+export function cerebralPathFromFunction<T, T2>(func: (model: T) => T2, args: any[]) : { strings: string[], values: any[] } {
     pathLambdaRegex.lastIndex = 0;
     const str = func.toString().replace(/"use strict";/, '');
     let m;
@@ -10,7 +10,7 @@ export function cerebralPathFromFunction<T, T2>(func: (model: T) => T2, args: an
 
         if (args.length > 0) {
             for (let i = 0; i < args.length; i++) {
-                output = output.replace(`[${i}]`, `.${args[i]}`);
+                output = output.replace(`[${i}]`, ".|");
             }
         } else {
             output = output.replace(/\[/g, ".").replace(/\]/g, "");
@@ -20,7 +20,12 @@ export function cerebralPathFromFunction<T, T2>(func: (model: T) => T2, args: an
             output = output.substring(1);
         }
 
-        return output;
+        let result = {
+            strings: output.split("|"),
+            values: args
+        };
+        
+        return result;
     }
 
     // @ts-ignore: Really returns a string

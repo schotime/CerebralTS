@@ -1,12 +1,13 @@
 import { Controller, ControllerClass, Chain } from 'cerebral';
 import { connect as cConnect } from '@cerebral/react';
-import { Tag } from 'cerebral/tags';
+import { Tag, string } from 'cerebral/tags';
 import { IStateModel } from 'cerebralts/c';
 import { Provider, FunctionTreePrimitive, Payload } from 'function-tree';
 import { IContext } from './chains';
 import { getStateTag, getSignalTag, getPropsTag } from './tagHelpers';
 import { cerebralPathFromFunction } from './paths';
 import { ComponentClass, SFC } from 'react'
+import { pathFrom } from './paths';
 
 export interface TSControllerOptions<TStateModel, TSignals> {
     state: TStateModel,
@@ -56,8 +57,8 @@ export class ActionContextHelper<TStateModel, TSignals> {
         return new ActionContextHelper<TValue, TSignals>(this.context, basePath);
     }
 
-    stateTag<TValue>(getter: (state: TStateModel) => TValue): TValue {
-        return getStateTag<TStateModel, TValue>(getter) as any as TValue;
+    stateTag<TValue>(getter: (state: TStateModel) => TValue, ...args: any[]): TValue {
+        return getStateTag<TStateModel, TValue>(getter, args) as any as TValue;
     }
 
     signalTag<TSignal>(getter: (signals: TSignals) => TSignal): TSignal {
@@ -65,10 +66,24 @@ export class ActionContextHelper<TStateModel, TSignals> {
     }
 }
 
+interface PropsMap<T> {
+    props(arg: (input: T) => any);
+}
+
 export function connect<P, EP = {}>(
-    propsMap: P,
+    propsMap: P | ((input: PropsMap<EP>) => P),
     component: ComponentClass<P & EP> | SFC<P & EP>
 ): ComponentClass<EP> {
+
+    if (typeof (propsMap) == "function") {
+        propsMap = propsMap({
+            props: (input) => {
+                var pTag = getPropsTag<EP, any>(input);
+                return pTag;
+            }
+        })
+    }
+
     return cConnect<P, EP>(propsMap as any, component);
 }
 
@@ -144,7 +159,9 @@ export class StateHelper<TStateModel> {
         }
     }
 
-    pathFromFunc<TValue>(getter: (input: TStateModel) => TValue, ...args: any[]) {
-        return cerebralPathFromFunction<TStateModel, TValue>(getter, args);
-    }
+    pathFromFunc<TValue>(getter: (input: TStateModel) => TValue, args: any[]) {
+        var results = cerebralPathFromFunction<TStateModel, TValue>(getter, args);
+        var s = string(results.strings, ...results.values) as any;
+        return s.pathToString();
+    }   
 }

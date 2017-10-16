@@ -58,7 +58,7 @@ class ChainTags<TInput, TState> {
 	}
 
 	state<TValue>(getter: (input: TState) => TValue): TValue {
-		return getStateTag<TState, TValue>(getter) as any as TValue;
+		return getStateTag<TState, TValue>(getter, []) as any as TValue;
 	}
 }
 
