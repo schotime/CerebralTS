@@ -20,28 +20,17 @@ export default connect2<ExtProps>()
     newItemTitleChanged: signal(x => x.newItemTitleChanged)
   }))
   .to(function App(props) {
-    const onFormSubmit = event => {
-      event.preventDefault();
-      props.newItemTitleSubmitted();
-    }
-
-    const onInputChange = event => {
-      props.newItemTitleChanged({
-        title: event.target.value
-      });
-    }
-
     return (
       <div>
         <h1>{props.appTitle}</h1>
 
         First Item is: {props.item || "empty"}
-        <form onSubmit={onFormSubmit}>
+        <form onSubmit={e => { e.preventDefault(); props.newItemTitleSubmitted(); }}>
           <input
             autoFocus
             type="text"
             value={props.newItemTitle}
-            onChange={onInputChange}
+            onChange={e => props.newItemTitleChanged({ title: e.target.value })}
           />
         </form>
         <ul>

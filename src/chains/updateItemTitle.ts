@@ -8,7 +8,9 @@ interface Input {
   title: string
 }
 
-var c = chain<Input>(x => x.seq(
-  set(x.tags.state(y => y.newItemTitle), x.tags.props(x => x.title)),
-));
+var c = chain<Input>(x => x.
+  seq(
+    set(x.tags.state(y => y.newItemTitle), x.tags.props(x => x.title)),
+  )
+);
 export default c;
