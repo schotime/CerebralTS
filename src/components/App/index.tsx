@@ -1,34 +1,25 @@
 import * as React from 'react'
 import { signals, model } from '../../controller';
 import { state, signal, tagToPath } from '../../helpers';
-import { connect } from 'cerebral-ts/react'
+import { connect2 } from 'cerebral-ts/react'
 
 import Thing from './Thing';
-
-interface Props {
-  appTitle: string,
-  item: string;
-  items: typeof model.items,
-  things: typeof model.things,
-  newItemTitle: typeof model.newItemTitle,
-  newItemTitleSubmitted: typeof signals.newItemTitleSubmitted,
-  newItemTitleChanged: typeof signals.newItemTitleChanged
-}
 
 interface ExtProps {
   appTitle: string
 }
 
-export default connect<Props, ExtProps>(map => ({
-  appTitle: map.props(x => x.appTitle),
-  item: state(x => x.items[0], 0),
-  items: state(x => x.items),
-  things: state(x => x.things),
-  newItemTitle: state(x => x.newItemTitle),
-  newItemTitleSubmitted: signal(x => x.newItemTitleSubmitted),
-  newItemTitleChanged: signal(x => x.newItemTitleChanged)
-}), 
-  function App(props) {
+export default connect2<ExtProps>()
+  .with(map => ({
+    appTitle: map.props(x => x.appTitle),
+    item: state(x => x.items[0], 0),
+    items: state(x => x.items),
+    things: state(x => x.things),
+    newItemTitle: state(x => x.newItemTitle),
+    newItemTitleSubmitted: signal(x => x.newItemTitleSubmitted),
+    newItemTitleChanged: signal(x => x.newItemTitleChanged)
+  }))
+  .to(function App(props) {
     const onFormSubmit = event => {
       event.preventDefault()
       props.newItemTitleSubmitted()
@@ -68,5 +59,5 @@ export default connect<Props, ExtProps>(map => ({
         </div>
       </div>
     )
-  }
-)
+  });
+

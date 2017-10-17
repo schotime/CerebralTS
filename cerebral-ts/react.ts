@@ -41,3 +41,34 @@ export function connect<P, EP = {}>(
 
     return cerebralConnect<P, EP>(propsMap as any, component);
 }
+
+export function connect2<EP = {}>() {
+    return {
+        with<P>(propsMap: P | ((input: PropsMap<EP>) => P)) {
+            return {
+                to(component: (React.ComponentClass<P & EP> | React.SFC<P & EP>)) : React.ComponentClass<EP> {
+
+                    if (typeof (propsMap) == "function") {
+                        propsMap = propsMap({
+                            props: <TValue>(input) => {
+                                return getPropsTag<EP, TValue>(input) as any as TValue;
+                            },
+                            fromPropsPath: <TPathModel>(pathPropGetter): PropsMapFromPathFluent<TPathModel> => {
+                                var basePathPropTag = getPropsTag<EP, TPathModel>(pathPropGetter);
+                
+                                return  {
+                                    state: <TValue>(getter: (input: TPathModel) => TValue, ...args: any[]): TValue => {
+                                        var stateTag = (getStateTag<TPathModel, TValue>(getter, args) as any).pathToString();
+                                        return cerebralState`${basePathPropTag}.${stateTag}` as any as TValue;
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    return cerebralConnect<P, EP>(propsMap as any, component);
+                }
+            }
+        }
+    }
+}
