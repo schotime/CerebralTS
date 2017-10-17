@@ -1,13 +1,12 @@
+interface SomeNestedThing {
+  title: string,
+  description: string
+}
+
 export interface StateModel {
   items: string[],
-  newItemTitle: string
+  newItemTitle: string,
+  things: SomeNestedThing[]
 };
 
-const strongModel: StateModel = {
-  items: [],
-  newItemTitle: ''
-};
-
-const model = strongModel;
-
-export default model;
+export default StateModel;

@@ -1,14 +1,14 @@
 import { Controller, ControllerClass, Chain } from 'cerebral';
-import { connect as cConnect } from '@cerebral/react';
-import { Tag, string } from 'cerebral/tags';
-import { IStateModel } from 'cerebralts/c';
+import { Tag, string, state as cerebralState } from 'cerebral/tags';
 import { Provider, FunctionTreePrimitive, Payload } from 'function-tree';
-import { IContext } from './chains';
-import { getStateTag, getSignalTag, getPropsTag } from './tagHelpers';
-import { cerebralPathFromFunction } from './paths';
-import { ComponentClass, SFC } from 'react'
-import { pathFrom } from './paths';
 
+import { IStateModel } from 'cerebral-ts/state';
+
+import { IContext } from './chains';
+import { pathFrom, cerebralPathFromFunction } from './paths';
+import { getStateTag, getSignalTag, getPropsTag } from './tagHelpers';
+
+// ControllerOptions is not exported by cerebral, would be useful to have this for an extends / implements
 export interface TSControllerOptions<TStateModel, TSignals> {
     state: TStateModel,
     signals: TSignals,
@@ -19,10 +19,8 @@ export function TSController<TStateModel, TSignals>(config: TSControllerOptions<
     return Controller(config as any);
 }
 
-export interface IActionContextOptions {
-}
-
-export function ActionContextHelperProviderFactory<TStateModel, TSignals>(options: IActionContextOptions): Provider {
+export interface IActionContextOptions {}
+export function ActionContextHelperProviderFactory<TStateModel, TSignals>(options?: IActionContextOptions): Provider {
     let ActionContextProvider: Provider = (context: any, funcDetails: FunctionTreePrimitive, payload: Payload, next: Payload) => {
         var actionContext = new ActionContextHelper<TStateModel, TSignals>(context);
         context.helper = actionContext;
@@ -31,6 +29,9 @@ export function ActionContextHelperProviderFactory<TStateModel, TSignals>(option
 
     return ActionContextProvider;
 };
+
+export interface Path<T> { ____pathOfT: string };
+type StatePropLambda<TStateModel, TValue> = (input: TStateModel) => TValue;
 
 export class ActionContextHelper<TStateModel, TSignals> {
     private context: any;
@@ -64,30 +65,11 @@ export class ActionContextHelper<TStateModel, TSignals> {
     signalTag<TSignal>(getter: (signals: TSignals) => TSignal): TSignal {
         return getSignalTag<TSignals, TSignal>(getter) as any as TSignal;
     }
-}
 
-interface PropsMap<T> {
-    props(arg: (input: T) => any);
-}
-
-export function connect<P, EP = {}>(
-    propsMap: P | ((input: PropsMap<EP>) => P),
-    component: ComponentClass<P & EP> | SFC<P & EP>
-): ComponentClass<EP> {
-
-    if (typeof (propsMap) == "function") {
-        propsMap = propsMap({
-            props: (input) => {
-                var pTag = getPropsTag<EP, any>(input);
-                return pTag;
-            }
-        })
+    tagToPath<T>(tag: T): Path<T> {
+        return (tag as any).pathToString();
     }
-
-    return cConnect<P, EP>(propsMap as any, component);
 }
-
-type StatePropLambda<TStateModel, TValue> = (input: TStateModel) => TValue;
 
 interface IStateOperationFluent<TValue> {
     get(): TValue

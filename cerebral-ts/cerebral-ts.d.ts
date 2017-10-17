@@ -1,28 +1,4 @@
-﻿declare module "cerebralts/c" {
-    interface ICommonModule {
-        addModules(modules: any): void;
-        addSignals<T>(signals: T): void;
-        addServices(services: any): void;
-        addContextProvider(contextProvider: any): void;
-    }
-
-    export interface IModule<TState> extends ICommonModule {
-        addState(state: TState): void;
-    }
-
-    export interface IController extends ICommonModule {
-        (model?: any): IController;
-
-        get(path?: string): any;
-        getSignals(path?: string): any;
-        getModules(path?: string): any;
-        getServices(path?: string): any;
-
-        on(eventName: string, callback: Function): void;
-    }
-
-    export const Controller: IController;
-
+﻿declare module "cerebral-ts/state" {
     export interface IStateModel {
         get(): any;
         get<T>(path: T): T;

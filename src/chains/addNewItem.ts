@@ -1,7 +1,7 @@
 // You can import any action and make
 // it part of the signal execution
 import { set } from 'cerebral/operators'
-import { chain, chainEmpty, MyContext } from "../helpers"
+import { chain, chainWithNoInput, MyContext } from "../helpers"
 
 export interface Output {
   newTitle: string
@@ -30,7 +30,7 @@ interface PathResult {
 }
 
 function pathTest({ props, helper, path }: MyContext<Output, PathModel>): PathResult {
-  if(props.newTitle == "test") {
+  if (props.newTitle == "test") {
     return path.success({ newTitleResult: props.newTitle });
   } else {
     return path.error({ newTitleResult: props.newTitle });
@@ -43,7 +43,7 @@ interface Countries {
   flag: string
 }
 
-var c = chainEmpty(x => x
+var c = chainWithNoInput(x => x
   .seq(addItem)
   .seq(update)
   .parallel(p => p
@@ -58,12 +58,10 @@ var c = chainEmpty(x => x
   )
   .seq(({ props, helper }) => { console.log("ehh?", props, helper); })
   .seqPath(pathTest)
-    .withPaths({
-        success: y => y.seq(({ props }) => { console.log("success", props.newTitleResult) }),
-        error: y => y.seq(({ props }) => { console.log("error", props.newTitleResult) })
-    })
-)
-
-console.log(c);
+  .withPaths({
+    success: y => y.seq(({ props }) => { console.log("success", props.newTitleResult) }),
+    error: y => y.seq(({ props }) => { console.log("error", props.newTitleResult) })
+  })
+);
 
 export default c;

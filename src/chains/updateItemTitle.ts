@@ -2,9 +2,7 @@
 // an action based on your arguments
 //import {copy} from 'cerebral/operators'
 import { set } from 'cerebral/operators';
-import { props } from 'cerebral/tags';
-import { Sequence } from 'function-tree';
-import { chain, state } from '../helpers'
+import { chain } from '../helpers'
 
 interface Input {
   title: string

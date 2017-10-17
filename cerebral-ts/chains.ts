@@ -1,4 +1,4 @@
-import { IStateModel } from "cerebralts/c";
+import { IStateModel } from "cerebral-ts/state";
 import { parallel } from "cerebral";
 import { Sequence } from "function-tree";
 import { getPropsTag, getStateTag } from './tagHelpers';
