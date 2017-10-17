@@ -21,14 +21,14 @@ export default connect2<ExtProps>()
   }))
   .to(function App(props) {
     const onFormSubmit = event => {
-      event.preventDefault()
-      props.newItemTitleSubmitted()
+      event.preventDefault();
+      props.newItemTitleSubmitted();
     }
 
     const onInputChange = event => {
       props.newItemTitleChanged({
         title: event.target.value
-      })
+      });
     }
 
     return (
