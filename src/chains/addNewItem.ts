@@ -1,15 +1,16 @@
 // You can import any action and make
 // it part of the signal execution
 import { set } from 'cerebral/operators'
-import { chain, chainWithNoInput, MyContext } from "../helpers"
+import { sequence, sequenceWithNoInput, MyContext } from "../helpers"
+import { external } from "./external";
 
 export interface Output {
   newTitle: string
 }
 
-function addItem({ props, helper, http }: MyContext<{}>): Output {
+function addItem({ props, helper, http, state }: MyContext<{}>): Output {
   helper.state(x => x.items).unshift(helper.state(x => x.newItemTitle).get());
-
+    
   return {
     newTitle: helper.state(x => x.newItemTitle).get()
   }
@@ -43,24 +44,27 @@ interface Countries {
   flag: string
 }
 
-var c = chainWithNoInput(x => x
-  .seq(addItem)
-  .seq(update)
-  .parallel(p => p
-    .seq(async ({ props, http }) => {
+var c = sequenceWithNoInput(x => x
+  .action(addItem)
+  .action(update)  
+  .sequence(external)
+  .parallel("Paz", p => p
+    .action("Flicker", async ({ props, http }) => {
       let results = await http.get<any>("https://api.flickr.com/services/rest/?&method=flickr.people.getPublicPhotos&format=json&api_key=6f93d9bd5fef5831ec592f0b527fdeff&user_id=9395899@N08");
       return { flickies: results.result }
     })
-    .seq(async ({ props, http }) => {
+    .action("Countries", async ({ props, http, helper }) => {
       let results = await http.get<Countries[]>("https://restcountries.eu/rest/v2/regionalbloc/eu");
       return { countries: results.result[0].flag }
     })
   )
-  .seq(({ props, helper }) => { console.log("ehh?", props, helper); })
-  .seqPath(pathTest)
-  .withPaths({
-    success: y => y.seq(({ props }) => { console.log("success", props.newTitleResult) }),
-    error: y => y.seq(({ props }) => { console.log("error", props.newTitleResult) })
+  .action(({ props, helper }) => { 
+    console.log("ehh?", props, helper); 
+  })
+  .actionWithPaths(pathTest)
+  .paths({
+    success: y => y.action(({ props }) => { console.log("success", props.newTitleResult) }),
+    error: y => y.action(({ props }) => { console.log("error", props.newTitleResult) })
   })
 );
 

@@ -2,14 +2,14 @@
 // an action based on your arguments
 //import {copy} from 'cerebral/operators'
 import { set } from 'cerebral/operators';
-import { chain } from '../helpers'
+import { sequence } from '../helpers'
 
 interface Input {
   title: string
 }
 
-var c = chain<Input>(x => x.
-  seq(
+var c = sequence<Input>(x => x
+  .action(
     set(x.tags.state(y => y.newItemTitle), x.tags.props(x => x.title)),
   )
 );

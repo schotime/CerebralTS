@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { signals, model } from '../../controller';
-import { state, signal, tagToPath } from '../../helpers';
-import { connect2 } from 'cerebral-ts/react'
+import { state, tagToPath, connect } from '../../helpers';
 
 import Thing from './Thing';
 
@@ -9,9 +8,9 @@ interface ExtProps {
   appTitle: string
 }
 
-export default connect2<ExtProps>()
-  .with(map => ({
-    appTitle: map.props(x => x.appTitle),
+export default connect<ExtProps>()
+  .with(({ state, props, signal }) => ({
+    appTitle: props(x => x.appTitle),
     item: state(x => x.items[0], 0),
     items: state(x => x.items),
     things: state(x => x.things),

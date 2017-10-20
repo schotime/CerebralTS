@@ -1,4 +1,6 @@
 export interface CoreSignals {
     newItemTitleSubmitted: (() => void),
-    newItemTitleChanged: ((input: { title: string }) => void)
+    newItemTitleChanged: ((props: { title: string }) => void)
 }
+
+export default CoreSignals

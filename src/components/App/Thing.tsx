@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { signals, model } from '../../controller';
-import { state, signal } from '../../helpers';
-import { connect2, Path } from 'cerebral-ts/react';
+import { state, signal, connect } from '../../helpers';
+import { Path } from 'cerebral-ts/react';
 
 interface ExtProps {
   thingPath: Path<typeof model.things[0]>
 }
 
-export default connect2<ExtProps>()
+export default connect<ExtProps>()
   .with(map => ({
     description: map.fromPropsPath(x => x.thingPath).state(x => x.description),
     title: map.fromPropsPath(x => x.thingPath).state(x => x.title)
