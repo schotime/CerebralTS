@@ -18,12 +18,12 @@ export class MyActionContextHelper extends ActionContextHelper<StateModel, CoreS
     }
 };
 
-export function sequenceWithNoInput(arg: (input: ChainBuilder<MyActionContextHelper, ProviderContext, {}, StateModel>) => ChainBuilder<MyActionContextHelper, ProviderContext, {}, StateModel>): () => void {
+export function sequenceWithNoInput<TOutput = void>(arg: (input: ChainBuilder<MyActionContextHelper, ProviderContext, {}, StateModel>) => ChainBuilder<MyActionContextHelper, ProviderContext, TOutput, StateModel>): () => TOutput {
     return chainFactory<MyActionContextHelper, ProviderContext, {}, StateModel>(arg) as any;
 };
 
-export function sequence<TInput>(arg: (input: ChainBuilder<MyActionContextHelper, ProviderContext, TInput, StateModel>) => ChainBuilder<MyActionContextHelper, ProviderContext, TInput, StateModel>): (input: TInput) => void {
-    return chainFactory<MyActionContextHelper, ProviderContext, TInput, StateModel>(arg) as any;
+export function sequence<TInput, TOutput = TInput>(arg: (input: ChainBuilder<MyActionContextHelper, ProviderContext, TInput, StateModel>) => ChainBuilder<MyActionContextHelper, ProviderContext, TOutput, StateModel>): (input: TInput) => TOutput {
+    return chainFactory<MyActionContextHelper, ProviderContext, TInput, StateModel>(arg as any) as any;
 };
 
 export function connect<EP>() {

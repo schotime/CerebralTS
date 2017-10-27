@@ -61,9 +61,9 @@ export class ChainBuilder<TActionContext, TContext = {}, TInput = {}, TState = {
 		this.sequenceArray.push(parallel(name, result.sequenceArray));
 		return new ChainBuilder<TActionContext, TContext, TInput & TOutput, TState>(this.sequenceArray);
 	}
-	sequence(seq: (input: TInput) => void | (() => void)) {
+	sequence<TOutput = void>(seq: (input: TInput) => TOutput | (() => TOutput)) {
 		this.sequenceArray.push(...(seq as any));
-		return new ChainBuilder<TActionContext, TContext, TInput, TState>(this.sequenceArray);
+		return new ChainBuilder<TActionContext, TContext, TInput & TOutput, TState>(this.sequenceArray);
 	}
 }
 
